@@ -2,7 +2,7 @@
 
 <html>
 	<head>
-		<title>Sign Up</title>
+		<title>Reservation</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<!--[if lte IE 8]><script src="assets/js/html5shiv.js"></script><![endif]-->
@@ -29,33 +29,45 @@
 						</header>
 						
 						<hr />
-						<h2>Hotel Signup</h2>
+						<h2>Reservation Form</h2>
 								
 							<p>{{error}}</p>
-							<form method="post" action="/signup/">
+							<form method="post" action="/{{ user.username }}/reservation_ack/">
 							{% csrf_token %}
 							<div class="field">
-								<input type="text" name="name" placeholder="Full Name" required/>
+								Username: <input type="text" name="username" value = "{{ customer.username }}" readonly><br>
 							</div>
 							<div class="field">
-								<input type="text" name="username" placeholder="User Name" required/>
+								Name: <input type="text" name="name" value = "{{ customer.name }}" readonly><br>
 							</div>
 							<div class="field">
-								<input type="password" name="password" placeholder="Password" required/>
+								Room to reserve : <select name="room_select">
+								{% for room in avail_rooms %}
+								    <option value="{{ room.room_no }}">{{ room.room_no }}	/	{{ room.room_type.name }}	/	{{ room.room_type.price }}	</option>
+								{% endfor %}
+  								</select>
 							</div>
-							
-							
+							<div class="field">
+								No. of adult : <input type="number" min="1" name="no_of_adults" required/>
+							</div>
+							<div class="field">
+								No. of child : <input type="number" min="0" name="no_of_child" required/>
+							</div>
+							<div class="field">
+								Arrival Date : <input type="date" data-date-inline-picker="true" name="arrival_timestamp" required/>
+							</div>
+							<div class="field">
+								Departure Date : <input type="date" data-date-inline-picker="true" name="departure_timestamp" required/>
+							</div>
 							<ul class="actions">
-								<li><input class="button" type="submit" value="Signup!" ></li>
+								<li><input class="button" type="submit" value="Submit" ></li>
 							</ul>
 						</form>
 						<hr />
 						
 						<footer>
 							<ul class="icons">
-								<li><a href="/" class="fa fa-home">Home</a></li>
-								<li><a href="/login/" class="fa fa-user-plus">Login</a></li>
-								
+								<li><a href="/" class="fa fa-home">Home</a></li>								
 							</ul>
 						</footer>
 					</section>

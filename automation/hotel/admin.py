@@ -1,6 +1,8 @@
 from django.contrib import admin
 from .models import *
 
+admin.site.register(User)
+
 @admin.register(Customer)
 class CustomerAdmin(admin.ModelAdmin):
     list_display = (
@@ -30,9 +32,8 @@ class ReservationAdmin(admin.ModelAdmin):
         'customer',
         'no_of_children',
         'no_of_adults',
-        'reservation_date_time',
-        'expected_arrival_date_time',
-        'expected_departure_date_time',
+        'expected_arrival_date',
+        'expected_departure_date',
     )
 
 
@@ -41,12 +42,10 @@ class RoomAdmin(admin.ModelAdmin):
     list_display = (
         'room_no',
         'room_type',
-        'reservation',
         'availability',
     )
     # Adding filter
     list_filter = ('room_type', 'availability')
-    fields = (('room_no', 'room_type'), 'reservation')
 
 @admin.register(RoomType)
 class RoomTypeAdmin(admin.ModelAdmin):

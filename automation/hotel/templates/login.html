@@ -35,10 +35,10 @@
 						<form method="post" action="/login/">
 							{% csrf_token %}
 							<div class="field">
-								<input type="text" name="username" placeholder="Username" />
+								<input type="text" name="username" placeholder="Username" required/>
 							</div>
 							<div class="field">
-								<input type="password" name="password" placeholder="Password" />
+								<input type="password" name="password" placeholder="Password" required/>
 							</div>
 							
 							

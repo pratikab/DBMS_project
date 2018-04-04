@@ -4,6 +4,10 @@ from django.db import models
 from django.contrib.auth.models import User
 # from django.urls import reverse
 from django.utils import timezone
+from datetime import date
+from django.contrib.auth.models import AbstractUser
+
+
 
 class Customer(models.Model):
 	name = models.CharField(max_length=200,default="",blank=True)
@@ -13,14 +17,14 @@ class Customer(models.Model):
 		return str(self.username)
 
 class Reservation(models.Model):
-    reservation_id = models.AutoField(primary_key=True)
-    customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
+    reservation_id = models.PositiveSmallIntegerField(default=0,primary_key=True)
+    customer = models.ForeignKey('Customer', on_delete=models.CASCADE)
     no_of_children = models.PositiveSmallIntegerField(default=0)
     no_of_adults = models.PositiveSmallIntegerField(default=1)
-    reservation_date_time = models.DateTimeField(default=timezone.now)
-    expected_arrival_date_time = models.DateTimeField(default=timezone.now)
-    expected_departure_date_time = models.DateTimeField(default=timezone.now)
-
+    expected_arrival_date= models.DateField(default=date.today)
+    expected_departure_date = models.DateField(default=date.today)
+    room_no = models.ForeignKey('Room', on_delete=models.CASCADE)
+    valid = models.BooleanField(default=False)
     class Meta:
         permissions = (('can_view_reservation', 'Can view reservation'),
                        ('can_view_reservation_detail', 'Can view reservation detail'),)
@@ -29,14 +33,14 @@ class Reservation(models.Model):
     #     return reverse('reservation-detail', args=str([self.reservation_id]))
 
     def __str__(self):
-        return '({0}) {1} {2}'.format(self.reservation_id, self.customer.first_name, self.customer.last_name)
+        return '%s %s %s %s %s' % (self.reservation_id, self.customer.name,self.expected_arrival_date,self.expected_departure_date, self.pk)
 
 
 class Room(models.Model):
     room_no = models.CharField(max_length=10, primary_key=True)
     room_type = models.ForeignKey('RoomType', null=False, blank=True, on_delete=models.CASCADE)
-    availability = models.BooleanField(default=0)
-    reservation = models.ForeignKey(Reservation, null=True, blank=True, on_delete=models.SET_NULL)
+    availability = models.BooleanField(default=True)
+    # reservation = models.ForeignKey(Reservation, null=True, blank=True, on_delete=models.SET_NULL)
 
     class Meta:
         ordering = ['room_no', ]
@@ -45,17 +49,6 @@ class Room(models.Model):
     def __str__(self):
         return "%s - %s - Rs. %i" % (self.room_no, self.room_type.name, self.room_type.price)
 
-    def get_absolute_url(self):
-        return reverse('room-detail', args=[self.room_no])
-
-    def save(self, *args, **kwargs):  # Overriding default behaviour of save
-        if self.reservation:  # If it is reserved, than it should not be available
-            self.availability = 0
-        else:
-            self.availability = 1
-
-        super().save(*args, **kwargs)
-
 
 class RoomType(models.Model):
     name = models.CharField(max_length=25)
@@ -63,3 +56,6 @@ class RoomType(models.Model):
 
     def __str__(self):
         return self.name
+
+class User(AbstractUser):
+    isStaff = models.BooleanField(default=False)

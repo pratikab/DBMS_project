@@ -2,7 +2,7 @@
 
 <html>
 	<head>
-		<title>Sign Up</title>
+		<title>Hotel Dreamline</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<!--[if lte IE 8]><script src="assets/js/html5shiv.js"></script><![endif]-->
@@ -29,16 +29,13 @@
 						</header>
 						
 						<hr />
-						<h2>Hotel Signup</h2>
+						<h2>Login</h2>
 								
-							<p>{{error}}</p>
-							<form method="post" action="/signup/">
+						<h3 style="color: red;">{{error}}</h3>
+						<form method="post" action="/stafflogin/">
 							{% csrf_token %}
 							<div class="field">
-								<input type="text" name="name" placeholder="Full Name" required/>
-							</div>
-							<div class="field">
-								<input type="text" name="username" placeholder="User Name" required/>
+								<input type="text" name="username" placeholder="Username" required/>
 							</div>
 							<div class="field">
 								<input type="password" name="password" placeholder="Password" required/>
@@ -46,15 +43,18 @@
 							
 							
 							<ul class="actions">
-								<li><input class="button" type="submit" value="Signup!" ></li>
+								<li><input class="button" type="submit" value="Login!" ></li>
 							</ul>
 						</form>
+						<a href="/forgotpass/">Forgot Password</a>
 						<hr />
 						
 						<footer>
 							<ul class="icons">
 								<li><a href="/" class="fa fa-home">Home</a></li>
-								<li><a href="/login/" class="fa fa-user-plus">Login</a></li>
+								<li><a href="/signup/" class="fa fa-user-plus">Signup</a></li>
+								
+								
 								
 							</ul>
 						</footer>

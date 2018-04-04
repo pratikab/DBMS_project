@@ -59,7 +59,7 @@
 		    		</li>
                    {% else %}
                     <li>
-                    	<a class="page-scroll" href= "/{{ user.username }}/usrhome/"> HOME </a>
+                        <a class="page-scroll" href= "/{{ user.username }}/usrhome/"> HOME </a>
                         <a class="page-scroll" href="/logout/">Logout : {{ user.username }}</a>
                     </li>
                    	{% endif %}
@@ -78,15 +78,52 @@
                     <div class="header-content">
                         <div class="header-content col-sm-10">
                             <h1> The Hotel Automation System</h1>
-                            	<div> <h2> Welcome, {{ user.username }} </h2>  </div>
-				                {% if not user.isStaff %}
-				                    <div> <a href="/room/"> <h3> Room Details </h3></div>
-                                    <div> <a href= "/{{ user.username }}/reservation_form/"> <h3> Request Reservation </h3></div>
-                                    <div> <a href= "/{{ user.username }}/reservation_view/"> <h3> Your Reservations </h3></div>
-                                {% else %}
-                                    <div> <a href="/room/"> <h3> Room Details </h3></div>
-                                    <div> <a href= "/{{ user.username }}/reservation_management/"> <h3> Reservation management </h3></div>
-                                {% endif %}
+                            {% if reservation %}
+                                <table class="table table-hover">
+                                    <thead class="thead-light">
+                                    <tr>
+                                        <th>Res. id </th>
+                                        <th>Room No </th>
+                                        <th>Arrival Date</th>
+                                        <th>Departure Date</th>
+                                        <th>Customer</th>
+                                        <th>Accept</th>
+                                        <th>Delete</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for r in reservation %}
+                                        <tr>
+                                            <td>{{ r.reservation_id }}</a></td>
+                                            <td>{{ r.room_no.room_no }}</a></td>
+                                            <td>{{ r.expected_arrival_date }}</td>
+                                            <td>{{ r.expected_departure_date }}</td>
+                                            <td>{{ r.customer.name }} </td>
+                                            <td> 
+                                                <form method="post" action="/{{ user.username }}/reservation_decide/">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="id" value = "{{ r.reservation_id }}" readonly>
+                                                <input type="hidden" name="action" value = "accept" readonly>
+                                                <button type="submit" name="SubmitButton" value="Accept">Accept</button>
+                                                </form>
+                                            </td>
+                                            <td> 
+                                                <form method="post" action="/{{ user.username }}/reservation_decide/">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="id" value = "{{ r.reservation_id }}" readonly>
+                                                <input type="hidden" name="action" value = "delete" readonly>
+                                                <button type="submit" name="SubmitButton" value="Delete">Delete</button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            {% else %}
+                                <p>There are no reservations pending.</p>
+                            {% endif %}
+
+
                         </div>
                     </div>
                 </div>
@@ -112,7 +149,12 @@
     <!-- Theme JavaScript -->
     {% load staticfiles %}
     <script src="{% static "js/new-age.min.js"%}"></script>
-
+    <script>
+                if ('addEventListener' in window) {
+                    window.addEventListener('load', function() { document.body.className = document.body.className.replace(/\bis-loading\b/, ''); });
+                    document.body.className += (navigator.userAgent.match(/(MSIE|rv:11\.0)/) ? ' is-ie' : '');
+                }
+    </script>
 </body>
 
 </html>
