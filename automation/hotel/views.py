@@ -14,6 +14,8 @@ from datetime import date
 from django.core.mail import send_mail
 from django.contrib.auth.models import User
 from django.db.models import Max
+from django.contrib.auth import get_user_model
+User = get_user_model()
 
 import time
 counter = 0
@@ -90,6 +92,8 @@ def signup_view(request):
 	name = request.POST.get('name',False)
 	username = request.POST.get('username',False)
 	password = request.POST.get('password',False)
+	email = request.POST.get('email',False)
+	phoNo = request.POST.get('phoNo',False)
 	error = ""
 	if username != False:
 		if User.objects.filter(username=username).exists():
@@ -97,7 +101,7 @@ def signup_view(request):
 		else:
 			user = User.objects.create_user(username=username,password=password,isStaff=False)
 			user.save()
-			customer = Customer(username=username,name=name)
+			customer = Customer(username=username,name=name,phoNo=phoNo,email=email)
 			customer.save()
 			return redirect('/login/')
 
@@ -212,12 +216,14 @@ def reservation_ack(request,username):
 		r1 = Reservation(reservation_id=get_id(),customer=c,no_of_children=no_of_child,no_of_adults=no_of_adults,expected_arrival_date=arrival_timestamp,expected_departure_date=departure_timestamp,room_no=room_allocated,valid=False)
 		r1.save()
 		print(r1)
+		emailaddr = c.email
 	return render(
 		request,
 		'reservation_ack.html',
 		{
 			'valid':valid,
-			'error':error
+			'error':error,
+			'email':emailaddr,
 		}
 	)
 

@@ -2,6 +2,8 @@ from django.core.management.base import BaseCommand
 from hotel.models import *
 from django.contrib.auth.models import Group
 import datetime
+from django.contrib.auth import get_user_model
+User = get_user_model()
 class Command(BaseCommand):
 	args = '<foo bar ...>'
 	help = 'our help string comes here'
@@ -11,12 +13,12 @@ class Command(BaseCommand):
 		username = "PINU"
 		user = User.objects.create_user(username=username,password=password,isStaff=False)
 		user.save()
-		customer = Customer(username=username,name="Pratik Bhangale")
+		customer = Customer(username=username,name="Pratik Bhangale",phoNo="8960742030",email="pratikab@iitk.ac.in")
 		customer.save()
 		username = "TEST"
 		user = User.objects.create_user(username=username,password=password,isStaff=False)
 		user.save()
-		customer = Customer(username=username,name="testuser")
+		customer = Customer(username=username,name="testuser",phoNo="8960742030",email="14173@iitk.ac.in")
 		customer.save()
 		user = User.objects.create_user(username="MANAGER",password="password",isStaff=True)
 		user.save()

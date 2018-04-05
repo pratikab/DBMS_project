@@ -13,6 +13,7 @@ class Customer(models.Model):
 	name = models.CharField(max_length=200,default="",blank=True)
 	username = models.CharField(max_length=15,default="", primary_key=True)
 	phoNo = models.CharField(max_length=10,default="")
+	email = models.EmailField(max_length=254,default="bhangalepratik8@gmail.com")
 	def __str__(self):
 		return str(self.username)
 

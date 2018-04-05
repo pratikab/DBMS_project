@@ -82,7 +82,7 @@
                             <a href="/signup/" class="btn btn-outline btn-xl page-scroll">Signup Here</a>  
                             {% else %}
                                 {% if valid %}
-                                    <h2> Your request has been sent to staff. <br> You will recieve mail about confirmation soon. </h2>
+                                    <h2> Your request has been sent to staff. <br> You will recieve mail on {{ email }} about confirmation soon. </h2>
                                     <a href="/{{ user.username }}/usrhome/" class="btn btn-outline btn-xl page-scroll">Click here to go to your Home</a>
                                 {% else %}
                                     <h2> We could no process your request. <br> >>> {{ error }} </h2>
