@@ -32,13 +32,16 @@
 						<h2>Reservation Form</h2>
 								
 							<p>{{error}}</p>
-							<form method="post" action="/{{ user.username }}/reservation_ack/">
+							<form method="post" action="/{{ res.reservation_id }}/res_ack/">
 							{% csrf_token %}
 							<div class="field">
-								Username: <input type="text" name="username" value = "{{ customer.username }}" readonly><br>
+								Res_id: <input type="text" name="id" value = "{{ res.reservation_id }}" readonly><br>
 							</div>
 							<div class="field">
-								Name: <input type="text" name="name" value = "{{ customer.name }}" readonly><br>
+								Room No: <input type="text" name="room_no" value = "{{ res.room_no.room_no }}" readonly><br>
+							</div>
+							<div class="field">
+								Username: <input type="text" name="username" value = "{{ res.customer.username }}" readonly><br>
 							</div>
 							<div class="field">
 								Room Type : <select name="room_select">
@@ -48,19 +51,19 @@
   								</select>
 							</div>
 							<div class="field">
-								No. of adult : <input type="number" min="1" name="no_of_adults" required/>
+								No. of adult : <input type="number" min="1" name="no_of_adults" value="{{ res.no_of_adults }}" required/>
 							</div>
 							<div class="field">
-								No. of child : <input type="number" min="0" name="no_of_child" required/>
+								No. of child : <input type="number" min="0" name="no_of_child" value="{{ res.no_of_children }}"required/>
 							</div>
 							<div class="field">
-								Arrival Date (M-D-Y) : <input type="date" data-date-inline-picker="true" name="arrival_timestamp" value="{{ x }}"  required/>
+								Arrival Date (M-D-Y) : <input type="date" data-date-inline-picker="true" name="arrival_timestamp" value="{{ x }}"required/>
 							</div>
 							<div class="field">
-								Departure Date (M-D-Y) : <input type="date" data-date-inline-picker="true" name="departure_timestamp" value="{{ x }}" required/>
+								Departure Date (M-D-Y) : <input type="date" data-date-inline-picker="true" name="departure_timestamp" value="{{ y }}" required/>
 							</div>
 							<ul class="actions">
-								<li><input class="button" type="submit" value="Submit" ></li>
+								<li><input class="button" type="submit" value="Change" ></li>
 							</ul>
 						</form>
 						<hr />

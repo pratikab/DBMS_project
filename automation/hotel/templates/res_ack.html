@@ -59,8 +59,6 @@
 		    		</li>
                    {% else %}
                     <li>
-                        <a class="page-scroll" href= "/{{ user.username }}/usrhome/"> HOME </a>
-                        <a class="page-scroll" href= "/room/"> Back </a>
                         <a class="page-scroll" href="/logout/">Logout : {{ user.username }}</a>
                     </li>
                    	{% endif %}
@@ -77,35 +75,15 @@
             <div class="row">
                 <div class="col-sm-7">
                     <div class="header-content">
-                        <div class="header-content col-sm-10">
+                        <div class="header-content-inner">
                             <h1> The Hotel Automation System</h1>
-                            <h3> {{ roomNo }} </h3>
-                            {% if res %}
-                                <table class="table table-hover">
-                                    <thead class="thead-light">
-                                    <tr>
-                                        <th>Arrival Date</th>
-                                        <th>Departure Date</th>
-                                        <th>Customer Name</th>
-                                        <th>Res ID</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    {% for r in res %}
-                                        <tr>
-                                            <td>{{ r.expected_arrival_date }}</a></td>
-                                            <td>{{ r.expected_departure_date }}</td>
-                                            <td>{{ r.customer.name }}</td>
-                                            <td> <a href="/{{ r.reservation_id }}/res_view/"> {{ r.reservation_id }} </td>
-                                        </tr>
-                                    {% endfor %}
-                                    </tbody>
-                                </table>
+                            {% if not user.is_authenticated %}
+                            <a href="/login/" class="btn btn-outline btn-xl page-scroll">Login</a>
+                            <a href="/signup/" class="btn btn-outline btn-xl page-scroll">Signup Here</a>  
                             {% else %}
-                                <p>There are no reservation for this room.</p>
-                            {% endif %}
-
-
+                                <h2> {{ message }} </h2>
+                                <a href="/reservation_change/" class="btn btn-outline btn-xl page-scroll">Click here to go to Management Page</a>
+                            {% endif %}                   
                         </div>
                     </div>
                 </div>
@@ -113,9 +91,35 @@
         </div>
         <br>
     </header>
-<!-- ToDo Work on FrontEnd -->
 
+   <!--  <section id="download" class="download bg-primary text-center">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-8 col-md-offset-2">
+                    <h2 class="section-heading">Discover what all the buzz is about!</h2>
+                    <p>Our app is available on any mobile device! Download now to get started!</p>
+                    <div class="badges">
+                        <a class="badge-link" href="#"><img src="img/google-play-badge.svg" alt=""></a>
+                        <a class="badge-link" href="#"><img src="img/app-store-badge.svg" alt=""></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+ -->
+    
 
+    <!-- <footer>
+        <div class="container">
+            <p>&copy; 2016 Hall-3. All Rights Reserved.</p>
+            <ul class="list-inline">
+                <li>
+                    <a href="http://home.iitk.ac.in/~adarshs">Adarsh Srivastava</a>
+                </li>
+                
+            </ul>
+        </div>
+    </footer> -->
 
     <!-- jQuery -->
     {% load staticfiles %}
