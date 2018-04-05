@@ -7,9 +7,9 @@ from django.shortcuts import redirect
 from django.contrib.auth.decorators import *
 import os
 from random import randint
-from bs4 import BeautifulSoup
 from hotel.models import *
-import datetime
+from datetime import datetime
+
 from datetime import date
 from django.core.mail import send_mail
 from django.contrib.auth.models import User
@@ -59,7 +59,7 @@ def login_page(request):
 		else:
 			error = "Wrong Username or Password!"
 			response = render(request,'login.html',{'error':error})
-	
+
 	return response
 
 
@@ -79,11 +79,11 @@ def staff_login_page(request):
 			if user.is_active:
 				login(request,user)
 				current_user = request.user
-				return redirect('/'+user.username+'/usrhome/')			
+				return redirect('/'+user.username+'/usrhome/')
 		else:
 			error = "Wrong Username or Password!"
 			response = render(request,'stafflogin.html',{'error':error})
-	
+
 	return response
 
 def signup_view(request):
@@ -110,7 +110,7 @@ def logout_view(request):
 	return response
 	# return redirect('/')
 
-	
+
 @login_required(login_url = '/login/')
 def usrhome(request,username):
 	"""
@@ -135,6 +135,14 @@ def room_view(request):
 	"""
 	page_title = ("Hotel Management System")  # For page title as well as heading
 	rooms = Room.objects.all()
+	for r in rooms:
+		t = r.reservation_set.filter(valid=True)
+		flag = True
+		for x in t:
+			if x.expected_arrival_date <= date.today() <= x.expected_departure_date:
+				flag = False
+				break
+		r.availability = flag
 	total_num_rooms = Room.objects.all().count()
 	available_num_rooms = Room.objects.exclude(availability=False).count()
 	return render(
@@ -151,7 +159,7 @@ def room_view(request):
 def reservation_form(request,username):
 	username = request.user.username
 	c = Customer.objects.get(username=username)
-	avail_rooms = Room.objects.exclude(availability=False)
+	avail_rooms = RoomType.objects.all()
 	error = ""
 	return render(
 		request,
@@ -169,20 +177,37 @@ def reservation_ack(request,username):
 	error = ""
 	username = request.POST.get('username',False)
 	c = Customer.objects.get(username=username)
-	roomNo = request.POST.get('room_select',False)
+	roomtype = request.POST.get('room_select',False)
 	no_of_adults = request.POST.get('no_of_adults',False)
 	no_of_child = request.POST.get('no_of_child',False)
 	arrival_timestamp = request.POST.get('arrival_timestamp',False)
 	departure_timestamp = request.POST.get('departure_timestamp',False)
-	room1 = Room.objects.get(room_no=roomNo)
-	if arrival_timestamp>departure_timestamp : 
+	roomtype_obj = RoomType.objects.get(name=roomtype)
+	dummyroom = Room.objects.get(room_no='D-101')
+	rooms = roomtype_obj.room_set.all()
+	flag = False
+	for r in rooms:
+		t = r.reservation_set.filter(valid=True)
+		r1 = Reservation(reservation_id=0,customer=c,no_of_children=no_of_child,no_of_adults=no_of_adults,expected_arrival_date=arrival_timestamp,expected_departure_date=departure_timestamp,room_no=dummyroom,valid=False)
+		r1.save()
+		resr = Reservation.objects.get(reservation_id=0)
+		if not check_overlap(resr,t):
+			flag = True
+			room_allocated = r
+			resr.delete()
+			break
+		resr.delete()
+	if arrival_timestamp>departure_timestamp :
 		valid = False
-		error = "Select departure date later than that of arrival date"		
-	elif arrival_timestamp < str(date.today()) : 
+		error = "Select departure date later than that of arrival date"
+	elif arrival_timestamp < str(date.today()) :
 		valid = False
 		error = "Arrival date can't be in the past"
+	elif not flag:
+		valid = False
+		error = "No rooms avaiable of this type for your dates"
 	else:
-		r1 = Reservation(reservation_id=get_id(),customer=c,no_of_children=no_of_child,no_of_adults=no_of_adults,expected_arrival_date=arrival_timestamp,expected_departure_date=departure_timestamp,room_no=room1,valid=False)
+		r1 = Reservation(reservation_id=get_id(),customer=c,no_of_children=no_of_child,no_of_adults=no_of_adults,expected_arrival_date=arrival_timestamp,expected_departure_date=departure_timestamp,room_no=room_allocated,valid=False)
 		r1.save()
 		print(r1)
 	return render(
@@ -228,15 +253,23 @@ def reservation_decide(request,username):
 		id_ = request.POST.get('id',False)
 		action = request.POST.get('action',False)
 		message = ""
-		r = Reservation.objects.get(reservation_id=id_)
+		res1 = Reservation.objects.get(reservation_id=id_)
+
 		if action == "accept":
-			roomNo = r.room_no.room_no
-			room = Room.objects.get(room_no=roomNo)
-			c = room.reservation_set.filter(valid=True)
-			flag = check_overlap(r,c)
-			if not flag:
-				r.valid = True
-				r.save()
+			roomType = res1.room_no.room_type
+			roomtype_obj = RoomType.objects.get(name=roomType)	
+			rooms = roomtype_obj.room_set.all()
+			flag = False
+			for r in rooms:
+				t = r.reservation_set.filter(valid=True)
+				if not check_overlap(res1,t):
+					flag = True
+					room_allocated = r
+					break
+			if flag:
+				res1.room_no = room_allocated
+				res1.valid = True
+				res1.save()
 				message = "Reservation Successful"
 			else:
 				message = "Overlap in reservation"
@@ -252,3 +285,19 @@ def reservation_decide(request,username):
 		)
 	return HttpResponse("Permission Denied.")
 
+@login_required(login_url = '/login/')
+def room_status(request,roomNo):
+	if request.user.isStaff:
+		room = Room.objects.get(room_no=roomNo)
+		print(room)
+		t = room.reservation_set.filter(expected_arrival_date__gte=date.today(),valid=True)
+		print(t)
+		return render(
+			request,
+			'room_status.html',
+			{
+				'roomNo': roomNo,
+				'res':t,	
+			}
+		)
+	return HttpResponse("Permission Denied.")

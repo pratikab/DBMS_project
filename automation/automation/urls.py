@@ -17,6 +17,7 @@ urlpatterns = [
   # url(r'^mess/$', mess_view),
   # url(r'^delete/$', delete_all),
   url(r'^room/$', room_view),
+  url(r'^(?P<roomNo>.+)/room_status/$', room_status),
   url(r'^signup/$', signup_view),
   url(r'^(?P<username>[A-Z{20}]+)/usrhome/$', usrhome),
   url(r'^(?P<username>[A-Z{20}]+)/reservation_form/$', reservation_form),

@@ -41,9 +41,9 @@
 								Name: <input type="text" name="name" value = "{{ customer.name }}" readonly><br>
 							</div>
 							<div class="field">
-								Room to reserve : <select name="room_select">
+								Room Type : <select name="room_select">
 								{% for room in avail_rooms %}
-								    <option value="{{ room.room_no }}">{{ room.room_no }}	/	{{ room.room_type.name }}	/	{{ room.room_type.price }}	</option>
+								    <option value="{{ room.name }}"> {{ room.name }}	/	{{ room.price }}	</option>
 								{% endfor %}
   								</select>
 							</div>

@@ -83,7 +83,7 @@
                                     <thead class="thead-light">
                                     <tr>
                                         <th>Res. id </th>
-                                        <th>Room No </th>
+                                        <th>Room Type </th>
                                         <th>Arrival Date</th>
                                         <th>Departure Date</th>
                                         <th>Customer</th>
@@ -95,7 +95,7 @@
                                     {% for r in reservation %}
                                         <tr>
                                             <td>{{ r.reservation_id }}</a></td>
-                                            <td>{{ r.room_no.room_no }}</a></td>
+                                            <td>{{ r.room_no.room_type.name }}</a></td>
                                             <td>{{ r.expected_arrival_date }}</td>
                                             <td>{{ r.expected_departure_date }}</td>
                                             <td>{{ r.customer.name }} </td>
