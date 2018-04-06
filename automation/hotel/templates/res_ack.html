@@ -82,7 +82,11 @@
                             <a href="/signup/" class="btn btn-outline btn-xl page-scroll">Signup Here</a>  
                             {% else %}
                                 <h2> {{ message }} </h2>
+                                {% if user.isStaff %}
                                 <a href="/reservation_change/" class="btn btn-outline btn-xl page-scroll">Click here to go to Management Page</a>
+                                {% else %}
+                                 <a href="/{{ user.username }}/reservation_view/" class="btn btn-outline btn-xl page-scroll">Click here to go to your Management Page</a>
+                                {% endif %}
                             {% endif %}                   
                         </div>
                     </div>

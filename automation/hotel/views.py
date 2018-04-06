@@ -283,7 +283,7 @@ def reservation_decide(request,username):
 				message = "Overlap in reservation"
 		elif action == "delete":
 			message = "Deleted Successfully"
-			r.delete()
+			res1.delete()
 		return render(
 			request,
 			'reservation_decide.html',
@@ -349,7 +349,7 @@ def res_view(request,res_id):
 
 @login_required(login_url = '/login/')
 def res_del(request,res_id):
-	if request.user.isStaff and request.POST.get('action',False) == 'delete':
+	if request.POST.get('action',False) == 'delete':
 		res = Reservation.objects.get(reservation_id=res_id)
 		res.delete()
 		message = "Deleted Successfully"
@@ -389,7 +389,6 @@ def res_ack(request,res_id):
 		res1 = Reservation.objects.get(reservation_id=id_)
 		res2 = copy.deepcopy(res1)
 		res1.delete()
-		res2.save()
 		username = request.POST.get('username',False)
 		c = Customer.objects.get(username=username)
 		roomtype = request.POST.get('room_select',False)
@@ -415,9 +414,6 @@ def res_ack(request,res_id):
 		if arrival_timestamp>departure_timestamp :
 			res2.save()
 			message = "Select departure date later than that of arrival date"
-		elif arrival_timestamp < str(date.today()) :
-			res2.save()
-			message = "Arrival date can't be in the past"
 		elif not flag:
 			res2.save()
 			message = "No rooms avaiable of this type for your dates"
